@@ -1,0 +1,4 @@
+# Install this plugin into the selected profile using its package name.
+- insert:
+    - id: task-notify
+      name: dsh-task-notify

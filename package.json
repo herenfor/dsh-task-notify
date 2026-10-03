@@ -1,0 +1,63 @@
+{
+  "name": "dsh-task-notify",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./task-notify.mjs",
+    "./client": "./client.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings-general"
+      ]
+    },
+    "manifestVersion": 1
+  },
+  "description": "Task completion notifications for DeepSeek Harness, with browser notifications and a Windows fallback.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/herenfor/dsh-task-notify.git"
+  },
+  "homepage": "https://github.com/herenfor/dsh-task-notify#readme",
+  "bugs": {
+    "url": "https://github.com/herenfor/dsh-task-notify/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "notifications",
+    "windows",
+    "wsl"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": "0.2.0-rc.2"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "task-notify.mjs",
+    "notification-channel.mjs",
+    "client.js",
+    "notification-worker.js",
+    "notify-windows.sh",
+    "notify-windows.ps1",
+    "notify-windows-pwsh.ps1",
+    "notification-content.ps1",
+    "notification-identity.ps1",
+    "whale.svg",
+    "whale.png",
+    "whale.ico",
+    "cordis.patch.yml",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSE"
+  ],
+  "license": "MIT"
+}

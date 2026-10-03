@@ -12,6 +12,8 @@ The plugin tries browser notifications first. If no connected page can send one,
 
 This community plugin currently targets **Windows 11 + WSL2**, with DSH running in WSL.
 
+![A DSH task completes and a notification appears after switching to another window](https://raw.githubusercontent.com/herenfor/dsh-task-notify/v0.0.1/assets/demo.gif)
+
 ## Features
 
 - Notifies after a turn finishes normally. Cancelled turns, errors, and delegated child sessions do not trigger notifications.
@@ -38,7 +40,7 @@ The Minimal preset within the Web profile is supported. The separate `headless`,
 Run this in WSL:
 
 ```bash
-dsh plugin --profile web add github:herenfor/dsh-task-notify
+dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.1
 ```
 
 Wait for active tasks to finish, restart DSH, and refresh its browser page. The plugin loads automatically; no source path needs to be added by hand.

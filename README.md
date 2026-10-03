@@ -12,6 +12,8 @@
 
 这是一个社区插件，目前主要在 **Windows 11 + WSL2** 环境下使用。
 
+![DSH 执行任务，切到其他窗口后收到完成通知](https://raw.githubusercontent.com/herenfor/dsh-task-notify/v0.0.1/assets/demo.gif)
+
 ## 功能
 
 - 一轮对话正常结束时发送通知，取消、出错和委派的子任务结束时不提醒。
@@ -38,7 +40,7 @@ Web 里的 minimal 预设可以使用。独立的 `headless`、`sdk` 和 `sdk-mi
 在 WSL 终端运行：
 
 ```bash
-dsh plugin --profile web add github:herenfor/dsh-task-notify
+dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.1
 ```
 
 安装后，等当前任务结束，再重启 DSH 并刷新浏览器页面。插件会自动加载，无需手动添加源码路径。

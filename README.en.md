@@ -1,158 +1,94 @@
-# DSH task notifications
+# DSH Task Notify
+
+[![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2-blue)](#requirements)
+[![Tests](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml/badge.svg)](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml)
 
 [中文](README.md) | English
 
-An unofficial task completion notification plugin for DeepSeek Harness.
+Get a notification when DeepSeek Harness finishes a turn.
 
-The Web profile loads this DSH plugin on the host. It observes `session/event`
-and notifies only when a top-level `turn/end` has reason `completed`. It works
-with the Minimal preset and does not require model tools or changes to the
-agent runtime. Notifications do not open browsers, select conversations, or
-run a Windows click handler.
+The plugin tries browser notifications first. If no connected page can send one, or delivery fails, it falls back to a Windows notification. You can work in another window and come back when the notification arrives.
 
-## Delivery
+This community plugin currently targets **Windows 11 + WSL2**, with DSH running in WSL.
 
-1. `notification-channel.mjs` sends the completion to one connected browser
-   page with notification permission. DSH's existing authentication protects
-   the event stream, status endpoint, worker script, and icon.
-2. The page asks `notification-worker.js` to display a browser notification
-   and acknowledges submission. Multiple pages produce one notification;
-   the host prefers the currently or most recently focused capable page.
-3. If no capable page exists, submission fails, or no acknowledgement arrives
-   within 2.5 seconds, the host starts `notify-windows.sh` asynchronously.
-4. The script tries Windows PowerShell 5.1, then optionally pwsh with BurntToast
-   1.1.0. Both paths use DSH's own identity and the same Chinese content.
+## Features
 
-The event observer returns immediately. Notification and diagnostic logging
-failures cannot change the task result. Late browser submissions are declined
-or closed to avoid leaving a second card beside the Windows fallback.
+- Notifies after a turn finishes normally. Cancelled turns, errors, and delegated child sessions do not trigger notifications.
+- Works with the Minimal agent preset in the Web profile, even when the AI has no tools.
+- Windows notifications use the DSH name, whale icon, and default notification sound.
+- Notification failures do not affect the task.
 
-## Requirements and supported mode
+The current version only sends notifications. Clicking a notification does not take you to the conversation.
 
-- DSH `0.2.0-rc.2`, using the Web profile.
-- Windows 11 with WSL2 for the Windows notification fallback. DSH runs in WSL,
-  with Windows executable interoperability enabled.
-- A Node.js version supported by DSH; verification used Node.js `22.23.2`.
-- `pnpm` on PATH for `dsh plugin` installation.
+## Requirements
 
-The Minimal agent preset inside the Web profile is supported. The separate
-`headless`, `sdk`, and `sdk-minimal` profiles are not supported by this version:
-its host entry requires the Web server and browser Connection services.
+Verified with DSH `0.2.0-rc.2`, Node.js `22.23.2`, Windows 11, and WSL2.
 
-The plugin runs in the DSH host. The Windows sender uses the host user's
-permissions to submit notifications and register DSH's per-user display name
-and icon. It is independent of the model's tool list and agent tool sandbox.
-It adds no model tool or prompt content.
+You need:
 
-## Install into a Web profile
+- DSH's `web` profile and a Node.js version supported by DSH.
+- `pnpm` available in WSL when installing the plugin.
+- WSL interoperability with Windows programs for the Windows fallback.
 
-The package declares `dsh.bundle.patch` pointing to its own `cordis.patch.yml`.
-That layer inserts the host plugin by package name. The existing `dsh.client`
-declaration supplies its browser half. Installing the bundle enables both;
-users do not need to add a plugin source path to their profile patch.
+The Minimal preset within the Web profile is supported. The separate `headless`, `sdk`, and `sdk-minimal` profiles are not currently supported.
 
-Install directly from GitHub in WSL:
+## Install
+
+Run this in WSL:
 
 ```bash
 dsh plugin --profile web add github:herenfor/dsh-task-notify
 ```
 
-The current JavaScript files run directly, so this package has no installation
-build script. For reproducible installations, append `#<commit-sha>` to the
-GitHub package specifier after choosing the revision to install.
+Wait for active tasks to finish, restart DSH, and refresh its browser page. The plugin loads automatically; no source path needs to be added by hand.
 
-Alternatively, clone the repository and install from its directory:
+If you previously loaded a test version through a local path, remove the old `task-notify` entry from your profile patch so it does not override the installed version.
 
-```bash
-git clone https://github.com/herenfor/dsh-task-notify.git
-cd dsh-task-notify
-dsh plugin --profile web add "$PWD"
+## Enable browser notifications
+
+1. Open **Settings → 任务通知** in DSH.
+2. Click **启用浏览器通知** and allow notifications in the browser prompt.
+3. Click **测试通知** to check that a notification appears.
+
+Completed turns use the title `DSH · 本轮已完成`, with the conversation title when available. Test notifications are labelled `DSH · 通知测试`.
+
+At least one DSH page must stay connected to receive new browser notifications. If you close all pages, turn browser notifications off, or deny permission, the plugin uses Windows notifications instead.
+
+Permission is saved for each browser profile and website address. Changing the browser, port, or domain requires permission again. Open DSH through local `localhost` / `127.0.0.1` or HTTPS.
+
+## Windows notifications
+
+The default sender uses the built-in **Windows PowerShell 5.1**, with Chinese support and no extra module required. Notifications show `DeepSeek Harness`, the whale icon, and a task completion message.
+
+If that sender fails, the plugin tries **pwsh with BurntToast 1.1.0**. To enable this backup, run the following in Windows pwsh:
+
+```powershell
+Install-Module BurntToast -RequiredVersion 1.1.0 -Scope CurrentUser
 ```
 
-Restart DSH after active tasks finish, then refresh its browser page. If the
-profile already contains the earlier manual `task-notify` entry with a local
-file URL, remove that entry when migrating: the user's profile patch overrides
-the installed bundle layer.
+Browser notification sound depends on the browser and Windows settings. The Windows fallback requests the default notification sound. If notifications or sound are missing, check Windows notification settings and Do Not Disturb.
 
-To install a packaged copy, run `pnpm pack` in the plugin directory, then:
-
-```bash
-dsh plugin --profile web add "$PWD/dsh-task-notify-0.0.1.tgz"
-```
-
-To remove the dependency and its bundle layer:
+## Uninstall
 
 ```bash
 dsh plugin --profile web remove dsh-task-notify
 ```
 
-Installation verification on 2026-10-03 used DSH `0.2.0-rc.2`, Node.js
-`22.23.2`, Windows 11, and WSL2. A packed copy was installed into a fresh,
-isolated DSH home and Web profile. The bundle was added automatically without
-a manual plugin patch; the host activated, the task notification settings
-appeared, Chromium registered the worker and submitted a test notification
-without page errors, and the installed Windows sender exited successfully.
-Removal cleared the dependency and bundle layer. The test server was stopped
-after verification; the existing DSH service continued running.
+Restart DSH after removal. The display name and icon already registered in Windows remain in place.
 
-## Browser setup
+## Troubleshooting
 
-Refresh DSH, open Settings → 任务通知 → 启用浏览器通知, and allow notifications.
-Use 测试通知 to check the card. Permission belongs to the browser profile and
-website origin. Disabling browser notifications preserves Windows fallback.
+- **No browser notification:** Try the test button in settings and check the site's notification permission. This button only tests browser notifications.
+- **Test Windows notifications separately:** Run `./notify-windows.sh` from the plugin source directory in WSL.
+- **Notification settings are missing:** Check that you are using the `web` profile, have restarted DSH and refreshed the page, and have removed any old test-version profile entry.
 
-A test is titled `DSH · 通知测试`. A completed turn is titled
-`DSH · 本轮已完成`, with the conversation title when available. Neither message
-promises a click action. Clicking only closes the browser notification.
-
-The worker has the narrow `/dsh-task-notify/` scope, no fetch handler, and no
-page navigation code. It does not control the DSH page or maintain a background
-connection. A connected page is required for new browser notifications.
-Browser notification sound depends on the browser and Windows settings.
-
-## Windows fallback
-
-Run `./notify-windows.sh` from WSL to test this path. The card uses
-`DeepSeek Harness`, the whale icon, `任务已完成`, `本轮对话已正常结束。`, and
-the default Windows notification sound. Its XML has no launch URI or actions.
-
-`notification-identity.ps1` registers the per-user
-`DeepSeekHarness.TaskNotification` display name and icon. Whale assets are
-copied to `%LOCALAPPDATA%\DeepSeekHarness\TaskNotification`. No protocol handler
-is installed, and PowerShell's own identity is not used as a fallback.
-
-Windows PowerShell 5.1 is preferred. The optional pwsh path requires
-`Install-Module BurntToast -RequiredVersion 1.1.0 -Scope CurrentUser`.
-`DSH_NOTIFY_POWERSHELL` and `DSH_NOTIFY_PWSH` override executable paths.
-Both commands have an eight-second timeout. If both fail, the host logs the
-failure without affecting DSH. `notification-content.ps1` must retain its
-UTF-8 BOM so Windows PowerShell 5.1 reads Chinese correctly.
+For other problems, open an [issue](https://github.com/herenfor/dsh-task-notify/issues) with your DSH version, browser, and reproduction steps. Remove credentials, private startup links, and session information before sharing logs.
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance and
-[CHANGELOG.md](CHANGELOG.md) for version history. GitHub Actions runs the
-existing tests on Linux and Windows with Node.js 22 and 24; actual desktop
-notification appearance and sound still require manual verification.
-
-`package.json` declares the browser module through `./client` and `dsh.client`.
-Its only UI extension is the task notification settings section.
-`notification.log` records process IDs, completion session IDs, submission
-results, and failures; it does not record conversation text. `server.log` can
-contain private startup URLs and must not be shared unredacted.
-
-After changing host code, restart DSH once active tasks have completed and
-check for `plugin-loaded` under the new process ID. Refresh existing browser
-pages to load the frontend change. Old Windows cards retain their original
-activation settings until cleared; an updated browser worker closes its old
-cards when activated.
-
-Run `npm test` from a source checkout for delivery, fallback, authentication,
-expiry, and notification-only click checks. Automated browser checks cannot
-establish the actual Windows appearance or sound; use the manual test above.
+Implementation details, local installation, packaging, and verification notes are in [DEVELOPING.md](DEVELOPING.md) (Chinese). See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance and [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## License
 
-The plugin code is licensed under [MIT](LICENSE).
-The DeepSeek whale icon is an upstream asset; its origin and upstream license
-are preserved in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Code is licensed under [MIT](LICENSE). The whale icon comes from DeepSeek Harness; its source and original license are preserved in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). This is not an official DeepSeek plugin.

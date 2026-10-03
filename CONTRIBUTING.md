@@ -17,7 +17,8 @@ npm test
 npm pack --dry-run
 ```
 
-本项目没有安装时构建步骤，也没有 npm 运行依赖。完整安装和手动测试步骤见 [README](README.md)。
+本项目没有安装时构建步骤，也没有 npm 运行依赖。使用步骤见 [README](README.md)，
+实现细节、本地安装和打包方式见 [开发说明](DEVELOPING.md)。
 
 Windows 通知的外观、提示音和窗口行为需要在 Windows 11 + WSL2 中实际检查。现有自动测试不能代替这一步。
 

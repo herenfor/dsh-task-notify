@@ -58,6 +58,8 @@
     "cordis.patch.yml",
     "THIRD_PARTY_NOTICES.md",
     "README.en.md",
+    "DEVELOPING.md",
+    "CONTRIBUTING.md",
     "CHANGELOG.md",
     "LICENSE"
   ],

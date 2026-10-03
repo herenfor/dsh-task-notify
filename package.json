@@ -57,6 +57,8 @@
     "whale.ico",
     "cordis.patch.yml",
     "THIRD_PARTY_NOTICES.md",
+    "README.en.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "license": "MIT"

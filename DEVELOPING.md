@@ -41,6 +41,16 @@ npm pack --dry-run
 
 2026-10-03 已在隔离的 DSH home 中验证安装与卸载：bundle 自动加载、宿主激活、设置页出现、Chromium 提交通知无页面错误、安装包内的 Windows 发送脚本成功退出；未改变原有 DSH 服务。
 
+2026-10-17 已在 DSH `0.2.1-rc.2` 的独立 DSH home 中验证 `0.0.2` 候选包：
+
+- 新版安装器会拒绝只声明支持 `0.2.0-rc.2` 的旧包；新增 `0.2.1-rc.2` 声明后，正常安装并自动加载。
+- 真实宿主的 `session/event`、`turn/end`、`completed` 和 `delegationDepth` 继续适用，浏览器设置页与受身份验证保护的通知通道正常工作。
+- 用本地模拟 LLM 运行实际 agent loop：Web minimal 预设以及空工具预设均正常结束并成功提交浏览器通知，没有页面错误，也没有调用外部模型。空工具用例还关闭了测试环境的内置工作目录工具，确认模型请求中工具数量为零。
+- 关闭浏览器页面后进入 Windows 发送路径；用本地发送替身模拟成功以及两条路径都失败，任务结果均为 `completed`。错误结束、委派子会话结束没有触发通知。
+- Worker 已激活，未接管 DSH 页面。原有 16 项自动测试通过。
+
+这轮验证没有重新录制真实 Windows 通知外观或验证提示音。Windows 发送脚本与 `0.0.1` 相同；上述发送替身用于验证保底和失败隔离。兼容声明只包含已经验证过的两个 DSH 版本，不推定后续版本或其他预发布版本兼容。
+
 修改宿主代码后，等待任务结束再重启 DSH；修改前端后刷新页面。`notification-content.ps1` 必须保留 **UTF-8 BOM**，以便 Windows PowerShell 5.1 正确读取中文。
 
 `notification.log` 记录进程 ID、会话 ID、发送结果和失败信息，不记录对话正文；`server.log` 可能包含私有启动链接。两者均不进入 Git 和发布包。报告问题前，请去除日志中的私有地址和会话信息。
@@ -65,7 +75,7 @@ dsh plugin --profile web add "$PWD"
 
 ```bash
 pnpm pack
-dsh plugin --profile web add "$PWD/dsh-task-notify-0.0.1.tgz"
+dsh plugin --profile web add "$PWD/dsh-task-notify-0.0.2.tgz"
 ```
 
 固定提交安装时，使用 `github:herenfor/dsh-task-notify#<commit-sha>`，

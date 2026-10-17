@@ -1,7 +1,7 @@
 # DSH Task Notify · 任务完成通知
 
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2-blue)](#使用环境)
+[![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.2-blue)](#使用环境)
 [![测试](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml/badge.svg)](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml)
 
 中文 | [English](README.en.md)
@@ -25,7 +25,7 @@
 
 ## 使用环境
 
-已在 DSH `0.2.0-rc.2`、Node.js `22.23.2`、Windows 11 + WSL2 下验证，DSH 运行在 WSL 中。
+支持 DSH `0.2.0-rc.2` 和 `0.2.1-rc.2`。主要在 Windows 11 + WSL2 下使用，DSH 运行在 WSL 中，测试使用 Node.js `22.23.2`。
 
 使用前需要：
 
@@ -40,7 +40,7 @@ Web 里的 minimal 预设可以使用。独立的 `headless`、`sdk` 和 `sdk-mi
 在 WSL 终端运行：
 
 ```bash
-dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.1
+dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.2
 ```
 
 安装后，等当前任务结束，再重启 DSH 并刷新浏览器页面。插件会自动加载，无需手动添加源码路径。

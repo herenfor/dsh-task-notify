@@ -1,7 +1,7 @@
 # DSH Task Notify
 
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.2.0--rc.2-blue)](#requirements)
+[![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.2-blue)](#requirements)
 [![Tests](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml/badge.svg)](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml)
 
 [中文](README.md) | English
@@ -25,7 +25,7 @@ The current version only sends notifications. Clicking a notification does not t
 
 ## Requirements
 
-Verified with DSH `0.2.0-rc.2`, Node.js `22.23.2`, Windows 11, and WSL2.
+Supports DSH `0.2.0-rc.2` and `0.2.1-rc.2`. The plugin mainly targets Windows 11 + WSL2, with DSH running in WSL. Tests use Node.js `22.23.2`.
 
 You need:
 
@@ -40,7 +40,7 @@ The Minimal preset within the Web profile is supported. The separate `headless`,
 Run this in WSL:
 
 ```bash
-dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.1
+dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.2
 ```
 
 Wait for active tasks to finish, restart DSH, and refresh its browser page. The plugin loads automatically; no source path needs to be added by hand.

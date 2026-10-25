@@ -51,6 +51,17 @@ npm pack --dry-run
 
 这轮验证没有重新录制真实 Windows 通知外观或验证提示音。Windows 发送脚本与 `0.0.1` 相同；上述发送替身用于验证保底和失败隔离。兼容声明只包含已经验证过的两个 DSH 版本，不推定后续版本或其他预发布版本兼容。
 
+2026-10-26 已在独立 DSH home 和单独端口下验证 `0.0.3` 候选包与 DSH `0.2.1-rc.3`，使用 Node.js `22.23.4`：
+
+- 原有 16 项自动测试通过。
+- 真实宿主接受候选包兼容声明并激活插件；未授信请求被拒绝，完成登录后可访问通知通道、Worker 与图标。
+- 使用本地模拟 LLM 驱动实际 minimal Agent；顶层正常完成后，通过 SSE 通道收到通知并确认提交。零工具用例的模型请求中工具数量确认为零，同样触发通知。
+- 浏览器不具备通知能力时进入备用发送路径；发送替身退出失败时，Agent 仍正常完成。错误结束和委派子会话完成不触发通知。
+- 本轮没有操作真实浏览器通知 UI，也没有重新验证 Windows 弹窗外观或声音。测试仅使用隔离副本中的发送替身，不修改生产发送脚本。
+- 兼容验证期间未重启生产 DSH、未修改 profile 配置；此次只更新版本、兼容声明与文档。随后经用户授权重启生产 DSH，确认插件成功激活，登录后可访问通知 Worker 路由。
+
+当前兼容声明覆盖三个已验证 DSH 版本，不推定其他版本兼容。
+
 修改宿主代码后，等待任务结束再重启 DSH；修改前端后刷新页面。`notification-content.ps1` 必须保留 **UTF-8 BOM**，以便 Windows PowerShell 5.1 正确读取中文。
 
 `notification.log` 记录进程 ID、会话 ID、发送结果和失败信息，不记录对话正文；`server.log` 可能包含私有启动链接。两者均不进入 Git 和发布包。报告问题前，请去除日志中的私有地址和会话信息。
@@ -75,7 +86,7 @@ dsh plugin --profile web add "$PWD"
 
 ```bash
 pnpm pack
-dsh plugin --profile web add "$PWD/dsh-task-notify-0.0.2.tgz"
+dsh plugin --profile web add "$PWD/dsh-task-notify-0.0.3.tgz"
 ```
 
 固定提交安装时，使用 `github:herenfor/dsh-task-notify#<commit-sha>`，

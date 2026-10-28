@@ -41,14 +41,32 @@ async function notifyCompletedTurn(ctx, channel, sessionId) {
   notifyWithoutBlocking(ctx, sessionId)
 }
 
+/** The state a task_status call declared (see dsh-runtime-tuning wait-guard), or undefined. */
+export function declaredState(argumentsJson) {
+  try {
+    const state = JSON.parse(argumentsJson)?.state
+    return state === 'waiting' || state === 'done' ? state : undefined
+  } catch { return undefined }
+}
+
 export function apply(ctx) {
   record('plugin-loaded')
   let channel
   try { channel = createNotificationChannel(ctx, record) }
   catch (error) { record(`notification-channel-unavailable ${String(error)}`) }
+  // A turn that ends by declaring "waiting" is paused on background work, not finished.
+  const declared = new Map()
   ctx.on('session/event', (session, event) => {
-    if (event.type !== 'turn/end' || event.data.reason.kind !== 'completed') return
     if ((session.header.delegationDepth ?? 0) > 0) return
+    if (event.type === 'turn/start') { declared.delete(session.id); return }
+    if (event.type === 'tool/call' && event.data.name === 'task_status') {
+      declared.set(session.id, declaredState(event.data.arguments))
+      return
+    }
+    if (event.type !== 'turn/end' || event.data.reason.kind !== 'completed') return
+    const state = declared.get(session.id)
+    declared.delete(session.id)
+    if (state === 'waiting') { record(`turn-waiting session=${session.id}`); return }
 
     record(`turn-completed session=${session.id}`)
     // The observer returns immediately; a slow or failed browser cannot delay the agent.

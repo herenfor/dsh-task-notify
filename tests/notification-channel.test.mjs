@@ -52,6 +52,7 @@ test('completion is sent only to one authorized page with browser notification c
   const event = JSON.parse(new TextDecoder().decode((await reader.read()).value).slice(6).trim())
   assert.equal(event.type, 'notify')
   assert.equal(event.sessionId, 'target')
+  assert.equal(event.kind, 'completed')
   assert.ok(event.deadline > Date.now())
   // Another page cannot acknowledge this delivery.
   await f.post('/client', { clientId: 'client-aaaaaaaaaaaaaaaa', ticket: event.ticket, handled: true }, true)

@@ -17,11 +17,12 @@ This community plugin currently targets **Windows 11 + WSL2**, with DSH running 
 ## Features
 
 - Notifies after a turn finishes normally. Cancelled turns, errors, and delegated child sessions do not trigger notifications.
+- Also notifies when you are needed: an action is waiting for your approval, the AI asked you a question, or a turn ended with a question still unanswered. Anything you handle within 5 seconds is not announced.
 - Works with the Minimal agent preset in the Web profile, even when the AI has no tools.
 - Windows notifications use the DSH name, whale icon, and default notification sound.
 - Notification failures do not affect the task.
 
-The current version only sends notifications. Clicking a notification does not take you to the conversation.
+Notifications only say what happened. Clicking a notification does not take you to the conversation.
 
 ## Requirements
 
@@ -53,7 +54,7 @@ If you previously loaded a test version through a local path, remove the old `ta
 2. Click **启用浏览器通知** and allow notifications in the browser prompt.
 3. Click **测试通知** to check that a notification appears.
 
-Completed turns use the title `DSH · 本轮已完成`, with the conversation title when available. Test notifications are labelled `DSH · 通知测试`.
+The title says what happened: `DSH · 本轮已完成` (turn completed), `DSH · 等你回答` (turn ended with a question unanswered), `DSH · 需要审批` (approval needed) or `DSH · 需要你回答` (question asked), with the conversation title when available. Test notifications are labelled `DSH · 通知测试`.
 
 At least one DSH page must stay connected to receive new browser notifications. If you close all pages, turn browser notifications off, or deny permission, the plugin uses Windows notifications instead.
 
@@ -61,7 +62,7 @@ Permission is saved for each browser profile and website address. Changing the b
 
 ## Windows notifications
 
-The default sender uses the built-in **Windows PowerShell 5.1**, with Chinese support and no extra module required. Notifications show `DeepSeek Harness`, the whale icon, and a task completion message.
+The default sender uses the built-in **Windows PowerShell 5.1**, with Chinese support and no extra module required. Notifications show `DeepSeek Harness`, the whale icon, and a message saying what happened.
 
 If that sender fails, the plugin tries **pwsh with BurntToast 1.1.0**. To enable this backup, run the following in Windows pwsh:
 

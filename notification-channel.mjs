@@ -131,12 +131,12 @@ export function createNotificationChannel(ctx, record = () => {}) {
   }, 'dsh-task-notify: browser notifications')
 
   return {
-    async notify(sessionId) {
+    async notify(sessionId, kind = 'completed') {
       if (!available) return false
       const client = selectClient()
       if (!client) return false
       const handled = await send(client, randomBytes(24).toString('hex'), {
-        type: 'notify', sessionId, deadline: Date.now() + 2500,
+        type: 'notify', sessionId, kind, deadline: Date.now() + 2500,
       })
       record(`browser-${handled ? 'notified' : 'fallback'} session=${sessionId}`)
       return handled

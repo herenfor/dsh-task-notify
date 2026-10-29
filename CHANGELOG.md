@@ -4,6 +4,8 @@
 
 - 识别 `task_status` 工具的状态声明（由 dsh-runtime-tuning 的 wait-guard 提供）：声明为 `waiting`、正在等后台任务的一轮不再发送“完成”通知，等任务结束、模型声明 `done` 后再通知。
 - 没有安装 wait-guard、或模型没有声明时，行为和以前完全一样。
+- 通知会说明发生了什么：`本轮已完成`、`等你回答`（本轮结束时还有问题没回答，或模型声明了 `asking`）、`需要审批`（审批请求 5 秒内没处理）、`需要你回答`（AI 提问 5 秒内没回答）。浏览器通知和 Windows 通知用同一套文字。
+- 审批依据 DSH 的 `approval/asked` / `approval/decided` 会话事件；提问同时支持阻塞模式和 `timed` 模式的 `ask_user_question`。
 
 ## 0.0.3 · 2026-10-26
 

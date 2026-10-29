@@ -17,12 +17,13 @@ DSH 宿主收到 session/event
 | 文件 | 职责 |
 | --- | --- |
 | `task-notify.mjs` | 宿主插件入口，筛选完成事件并启动异步通知 |
+| `attention.mjs` | 跟踪等待审批和等待回答的时刻，5 秒内没处理才提醒 |
 | `notification-channel.mjs` | 受 DSH 身份验证保护的浏览器通道、页面选择与超时保底 |
 | `client.js` | DSH 浏览器插件与“任务通知”设置页 |
 | `notification-worker.js` | 显示浏览器通知，点击时关闭卡片 |
 | `notify-windows.sh` | 从 WSL 调用 Windows 发送路径并控制超时 |
 | `notification-identity.ps1` | 登记 Windows 通知名称和图标 |
-| `notification-content.ps1` | 中文通知内容与 XML |
+| `notification-content.ps1` | 按通知类型生成中文通知内容与 XML |
 
 宿主插件监听 agent 已经发出的事件，因此即使 AI 没有任何工具，完成通知也能触发。插件不增加模型工具或提示词，也不修改 agent runtime。
 

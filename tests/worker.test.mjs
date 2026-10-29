@@ -45,6 +45,18 @@ test('Chinese completion content has no routing data or click promise', async ()
   assert.equal(h.shown[0].options.icon, 'http://127.0.0.1:3080/dsh-task-notify/whale.png')
 })
 
+test('each notification kind says what the user is needed for', async () => {
+  const h = harness()
+  for (const kind of ['asking', 'approval', 'question', 'unknown', 'constructor']) await h.show({ kind, title: '任务通知插件' })
+  assert.deepEqual(h.shown.map(({ title, options }) => [title, options.body]), [
+    ['DSH · 等你回答', '会话：任务通知插件\n本轮已结束，还有问题等你回答。'],
+    ['DSH · 需要审批', '会话：任务通知插件\n有操作在等你批准。'],
+    ['DSH · 需要你回答', '会话：任务通知插件\nAI 向你提了问题。'],
+    ['DSH · 本轮已完成', '会话：任务通知插件\n本轮对话已正常结束。'],
+    ['DSH · 本轮已完成', '会话：任务通知插件\n本轮对话已正常结束。'],
+  ])
+})
+
 test('manual tests are labeled as tests and promise no page action', async () => {
   const h = harness()
   assert.equal(await h.show({ test: true }), true)

@@ -151,11 +151,11 @@ window.__ModuleLoader__.load({
           events.onopen = status
           events.onmessage = (event) => {
             try {
-              const { type, ticket, sessionId, deadline } = JSON.parse(event.data)
+              const { type, ticket, sessionId, kind, deadline } = JSON.parse(event.data)
               if (type !== 'notify' || typeof ticket !== 'string' || typeof sessionId !== 'string' ||
                   !Number.isFinite(deadline)) return
               const title = ctx.sessions.list.getSnapshot().byId?.[sessionId]?.title
-              void showNotification({ ticket, title, deadline })
+              void showNotification({ ticket, title, kind, deadline })
                 .then((handled) => sendStatus({ ticket, handled }))
             } catch (error) { console.warn('[dsh-task-notify] Invalid notification event:', error) }
           }

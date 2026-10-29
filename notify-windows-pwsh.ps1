@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$notificationKind = $args[0]
 
 Import-Module BurntToast -RequiredVersion 1.1.0 -ErrorAction Stop
 . (Join-Path $PSScriptRoot 'notification-identity.ps1')

@@ -57,7 +57,7 @@ function harness({ browser = true } = {}) {
   }
 }
 
-const completion = () => ({ data: JSON.stringify({ type: 'notify', ticket: 'delivery', sessionId: 'target', deadline: Date.now() + 2500 }) })
+const completion = () => ({ data: JSON.stringify({ type: 'notify', ticket: 'delivery', sessionId: 'target', kind: 'approval', deadline: Date.now() + 2500 }) })
 
 test('completion submits a browser notification using only notification services', async () => {
   const h = harness()
@@ -67,6 +67,7 @@ test('completion submits a browser notification using only notification services
   h.events.onmessage(completion())
   await h.waitForReport((report) => report.ticket === 'delivery')
   assert.equal(h.workerMessages[0].title, '学习 runtime')
+  assert.equal(h.workerMessages[0].kind, 'approval')
   assert.equal(h.workerMessages[0].sessionId, undefined)
   assert.equal(h.reports.at(-1).handled, true)
   h.dispose()

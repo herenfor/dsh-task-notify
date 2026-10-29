@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$notificationKind = $args[0]
 
 # Run with Windows PowerShell 5.1. PowerShell 7 does not expose these WinRT
 # notification types without an additional Windows SDK projection or module.

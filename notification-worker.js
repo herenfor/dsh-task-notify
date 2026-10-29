@@ -6,6 +6,14 @@ self.addEventListener('activate', (event) => event.waitUntil((async () => {
   for (const notification of await self.registration.getNotifications()) notification.close()
 })()))
 
+// Title and body per notification kind; anything unknown reads as an ordinary completion.
+const CONTENT = {
+  completed: ['DSH · 本轮已完成', '本轮对话已正常结束。'],
+  asking: ['DSH · 等你回答', '本轮已结束，还有问题等你回答。'],
+  approval: ['DSH · 需要审批', '有操作在等你批准。'],
+  question: ['DSH · 需要你回答', 'AI 向你提了问题。'],
+}
+
 self.addEventListener('message', (event) => {
   const data = event.data
   if (data?.type !== 'dsh-task-notify/show') return
@@ -17,8 +25,9 @@ self.addEventListener('message', (event) => {
           typeof data.ticket !== 'string' || !Number.isFinite(data.deadline) || Date.now() >= data.deadline) return
       const title = typeof data.title === 'string' ? data.title.trim().slice(0, 80) : ''
       const tag = `dsh-turn-${data.ticket}`
-      await self.registration.showNotification(data.test ? 'DSH · 通知测试' : 'DSH · 本轮已完成', {
-        body: data.test ? '浏览器通知已启用。' : title ? `会话：${title}\n本轮对话已正常结束。` : '本轮对话已正常结束。',
+      const [heading, text] = data.test ? ['DSH · 通知测试', '浏览器通知已启用。'] : CONTENT[Object.hasOwn(CONTENT, data.kind) ? data.kind : 'completed']
+      await self.registration.showNotification(heading, {
+        body: !data.test && title ? `会话：${title}\n${text}` : text,
         icon: new URL('whale.png', self.registration.scope).href,
         tag,
       })

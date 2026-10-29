@@ -1,7 +1,7 @@
 # DSH Task Notify · 任务完成通知
 
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.3-blue)](#使用环境)
+[![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.4-blue)](#使用环境)
 [![测试](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml/badge.svg)](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml)
 
 中文 | [English](README.en.md)
@@ -27,7 +27,7 @@
 
 ## 使用环境
 
-支持 DSH `0.2.0-rc.2`、`0.2.1-rc.2` 和 `0.2.1-rc.3`。主要在 Windows 11 + WSL2 下使用，DSH 运行在 WSL 中；`rc.3` 兼容验证使用 Node.js `22.23.4`。
+支持 DSH `0.2.0-rc.2`、`0.2.1-rc.2`、`0.2.1-rc.3` 和 `0.2.1-rc.4`。主要在 Windows 11 + WSL2 下使用，DSH 运行在 WSL 中；`rc.3`、`rc.4` 兼容验证使用 Node.js `22.23.4`。
 
 使用前需要：
 

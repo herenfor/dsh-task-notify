@@ -18,6 +18,7 @@ DSH 宿主收到 session/event
 | --- | --- |
 | `task-notify.mjs` | 宿主插件入口，筛选完成事件并启动异步通知 |
 | `attention.mjs` | 跟踪等待审批和等待回答的时刻，5 秒内没处理才提醒 |
+| `background-jobs.mjs` | 跟踪本次请求启动、还没结束的后台任务；任务还在跑的一轮不发完成通知，任务结束后 DSH 没有开启新一轮时，10 秒后补发 |
 | `notification-channel.mjs` | 受 DSH 身份验证保护的浏览器通道、页面选择与超时保底 |
 | `client.js` | DSH 浏览器插件与“任务通知”设置页 |
 | `notification-worker.js` | 显示浏览器通知，点击时关闭卡片 |

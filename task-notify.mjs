@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { appendFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { createAttentionTracker } from './attention.mjs'
+import { createJobTracker } from './background-jobs.mjs'
 import { createNotificationChannel } from './notification-channel.mjs'
 
 export const name = 'dsh-task-notify'
@@ -51,8 +52,8 @@ export function declaredState(argumentsJson) {
 }
 
 /** Which notification a normally completed turn gets, or undefined when it gets none. */
-export function turnEndKind(declared, hasOpenQuestion) {
-  if (declared === 'waiting') return undefined
+export function turnEndKind(declared, hasOpenQuestion, jobsRunning = false) {
+  if (declared === 'waiting' || jobsRunning) return undefined
   return declared === 'asking' || hasOpenQuestion ? 'asking' : 'completed'
 }
 
@@ -69,21 +70,29 @@ export function apply(ctx) {
     notify: (sessionId, kind) => { record(`needs-${kind} session=${sessionId}`); send(sessionId, kind) },
   })
   ctx.effect(() => () => attention.dispose(), 'dsh-task-notify: approval and question timers')
-  // A turn that ends by declaring "waiting" is paused on background work, not finished.
+  const jobs = createJobTracker({
+    setTimer: (fn, ms) => { const timer = setTimeout(fn, ms); timer.unref?.(); return timer },
+    clearTimer: (timer) => clearTimeout(timer),
+    notify: (sessionId) => { record(`jobs-finished session=${sessionId}`); send(sessionId, 'completed') },
+  })
+  ctx.effect(() => () => jobs.dispose(), 'dsh-task-notify: background job timers')
+  // A turn that ends while its background jobs run, or that declares "waiting", is paused, not finished.
   const declared = new Map()
   ctx.on('session/event', (session, event) => {
     if ((session.header.delegationDepth ?? 0) > 0) return
     attention.onEvent(session, event)
+    jobs.onEvent(session, event)
     if (event.type === 'turn/start') { declared.delete(session.id); return }
     if (event.type === 'tool/call' && event.data.name === 'task_status') {
       declared.set(session.id, declaredState(event.data.arguments))
       return
     }
     if (event.type !== 'turn/end' || event.data.reason.kind !== 'completed') return
-    const kind = turnEndKind(declared.get(session.id), attention.hasOpenQuestion(session.id))
+    const kind = turnEndKind(declared.get(session.id), attention.hasOpenQuestion(session.id), jobs.isWaiting(session.id))
     declared.delete(session.id)
-    if (kind === undefined) { record(`turn-waiting session=${session.id}`); return }
+    if (kind === undefined) { jobs.markQuiet(session.id); record(`turn-waiting session=${session.id}`); return }
 
+    jobs.markNotified(session.id)
     record(`turn-${kind} session=${session.id}`)
     send(session.id, kind)
   })

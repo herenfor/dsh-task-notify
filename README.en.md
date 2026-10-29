@@ -17,6 +17,7 @@ This community plugin currently targets **Windows 11 + WSL2**, with DSH running 
 ## Features
 
 - Notifies after a turn finishes normally. Cancelled turns, errors, and delegated child sessions do not trigger notifications.
+- A turn that ends while background jobs it started (such as a build) are still running does not notify; you are notified once the jobs finish and the AI has handled the results.
 - Also notifies when you are needed: an action is waiting for your approval, the AI asked you a question, or a turn ended with a question still unanswered. Anything you handle within 5 seconds is not announced.
 - Works with the Minimal agent preset in the Web profile, even when the AI has no tools.
 - Windows notifications use the DSH name, whale icon, and default notification sound.

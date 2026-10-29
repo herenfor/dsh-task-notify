@@ -45,6 +45,7 @@
   "files": [
     "task-notify.mjs",
     "attention.mjs",
+    "background-jobs.mjs",
     "notification-channel.mjs",
     "client.js",
     "notification-worker.js",

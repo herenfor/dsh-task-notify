@@ -19,3 +19,9 @@ test('turnEndKind skips waiting turns and names turns that still need an answer'
   assert.equal(turnEndKind('done', false), 'completed')
   assert.equal(turnEndKind(undefined, false), 'completed')
 })
+
+test('turnEndKind skips turns whose background jobs are still running, declared or not', () => {
+  assert.equal(turnEndKind(undefined, false, true), undefined)
+  assert.equal(turnEndKind('done', false, true), undefined)
+  assert.equal(turnEndKind(undefined, false, false), 'completed')
+})

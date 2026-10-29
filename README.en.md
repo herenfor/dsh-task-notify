@@ -73,6 +73,32 @@ Install-Module BurntToast -RequiredVersion 1.1.0 -Scope CurrentUser
 
 Browser notification sound depends on the browser and Windows settings. The Windows fallback requests the default notification sound. If notifications or sound are missing, check Windows notification settings and Do Not Disturb.
 
+## Tray icon (optional)
+
+The package also ships an optional Windows tray icon that treats DSH like an ordinary app:
+
+- Launch it: DSH starts if it is not running, then the page opens; if DSH is already running, the page opens.
+- Click the icon to open the page. "停止 DSH" in the right-click menu stops DSH and removes the icon.
+- The menu follows the Windows dark/light setting.
+
+It is not a DSH plugin, so install it once from WSL:
+
+```bash
+bash ~/.dsh/profiles/web/node_modules/dsh-task-notify/tray/install.sh
+```
+
+The files go to `%USERPROFILE%\DshTray`; double-click `start-dsh-tray.vbs` there to start it. `--autostart` adds a Startup entry that only shows the icon at sign-in, without starting DSH. Use `--port` when DSH does not listen on 3080.
+
+By default the tray starts DSH with `dsh web --no-open`. It only starts and stops DSH and never updates it. To use your own launcher instead, set it in `~/.config/dsh-tray/env`:
+
+```bash
+DSH_TRAY_START='my-launcher --no-open'   # must put itself in the background
+DSH_TRAY_STOP='my-launcher stop'
+DSH_TRAY_LOG="$HOME/.cache/my-launcher.log"   # where the launcher writes "dsh web: <url>"
+```
+
+To remove it, delete `%USERPROFILE%\DshTray` and `DSH tray.vbs` in the Startup folder.
+
 ## Uninstall
 
 ```bash

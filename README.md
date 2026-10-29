@@ -73,6 +73,32 @@ Install-Module BurntToast -RequiredVersion 1.1.0 -Scope CurrentUser
 
 浏览器通知的声音取决于浏览器和 Windows 设置；Windows 保底通知使用默认提示音。如果没有看到通知或听到声音，也可以检查系统通知设置和勿扰模式。
 
+## 托盘图标（可选）
+
+插件包里还带了一个可选的 Windows 托盘图标，把 DSH 当成一个普通应用来用：
+
+- 双击启动：DSH 没在运行就先启动它，然后打开网页；已经在运行就直接打开网页；
+- 单击图标打开网页；右键菜单“停止 DSH”会停掉 DSH，图标也一起退出；
+- 菜单跟随 Windows 的深色/浅色模式。
+
+它不是 DSH 插件，需要单独安装一次。在 WSL 里运行：
+
+```bash
+bash ~/.dsh/profiles/web/node_modules/dsh-task-notify/tray/install.sh
+```
+
+文件会复制到 `%USERPROFILE%\DshTray`，之后双击其中的 `start-dsh-tray.vbs` 启动。加上 `--autostart` 会在“启动”文件夹里放一个入口，登录时只显示图标，不启动 DSH；DSH 不在 3080 端口时用 `--port` 指定。
+
+托盘默认用 `dsh web --no-open` 启动 DSH，它只负责启动和停止，不会升级 DSH。如果你有自己的启动脚本，可以在 `~/.config/dsh-tray/env` 里改用它：
+
+```bash
+DSH_TRAY_START='my-launcher --no-open'   # 需要自己转入后台
+DSH_TRAY_STOP='my-launcher stop'
+DSH_TRAY_LOG="$HOME/.cache/my-launcher.log"   # 启动脚本写入 "dsh web: <地址>" 的日志
+```
+
+不想要了，删掉 `%USERPROFILE%\DshTray` 和“启动”文件夹里的 `DSH tray.vbs` 即可。
+
 ## 卸载
 
 ```bash

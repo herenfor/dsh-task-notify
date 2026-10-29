@@ -25,6 +25,9 @@ DSH 宿主收到 session/event
 | `notify-windows.sh` | 从 WSL 调用 Windows 发送路径并控制超时 |
 | `notification-identity.ps1` | 登记 Windows 通知名称和图标 |
 | `notification-content.ps1` | 按通知类型生成中文通知内容与 XML |
+| `tray/dsh-tray-host.sh` | 可选托盘图标在 WSL 这边的部分：启动、停止 `dsh web`，读取登录地址 |
+| `tray/dsh-tray.ps1`、`tray/start-dsh-tray.vbs` | 可选托盘图标在 Windows 这边的部分，以及不弹窗口的启动入口 |
+| `tray/install.sh` | 把托盘复制到 `%USERPROFILE%\DshTray`，可选加入开机启动 |
 
 宿主插件监听 agent 已经发出的事件，因此即使 AI 没有任何工具，完成通知也能触发。插件不增加模型工具或提示词，也不修改 agent runtime。
 

@@ -7,6 +7,8 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 const hostScript = fileURLToPath(new URL('../tray/dsh-tray-host.sh', import.meta.url))
+// The host script runs inside WSL and relies on bash, setsid and /proc.
+const linuxOnly = { skip: process.platform !== 'linux' && 'the tray host script runs on Linux (WSL)' }
 
 // A stand-in `dsh` that prints its sign-in line and stays alive under its own command line.
 function sandbox() {
@@ -27,7 +29,7 @@ const waitFor = (check) => {
   return check()
 }
 
-test('start runs dsh web once, url reads its sign-in line, stop ends it', () => {
+test('start runs dsh web once, url reads its sign-in line, stop ends it', linuxOnly, () => {
   const { run, pidFile } = sandbox()
   assert.equal(run('start').status, 0)
   assert.ok(waitFor(() => existsSync(pidFile) && run('url').stdout.trim() !== ''))
@@ -43,7 +45,7 @@ test('start runs dsh web once, url reads its sign-in line, stop ends it', () => 
   assert.equal(existsSync(pidFile), false)
 })
 
-test('stop leaves a stale or foreign pid alone', () => {
+test('stop leaves a stale or foreign pid alone', linuxOnly, () => {
   const { run, pidFile } = sandbox()
   mkdirSync(join(pidFile, '..'), { recursive: true })
   writeFileSync(pidFile, `${process.pid}\n`)  // this test runner is not `dsh web`
@@ -51,6 +53,6 @@ test('stop leaves a stale or foreign pid alone', () => {
   assert.equal(existsSync(`/proc/${process.pid}`), true)
 })
 
-test('unknown commands are rejected', () => {
+test('unknown commands are rejected', linuxOnly, () => {
   assert.equal(sandbox().run('bogus').status, 2)
 })

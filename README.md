@@ -87,7 +87,7 @@ Install-Module BurntToast -RequiredVersion 1.1.0 -Scope CurrentUser
 bash ~/.dsh/profiles/web/node_modules/dsh-task-notify/tray/install.sh
 ```
 
-文件会复制到 `%USERPROFILE%\DshTray`，之后双击其中的 `start-dsh-tray.vbs` 启动。加上 `--autostart` 会在“启动”文件夹里放一个入口，登录时只显示图标，不启动 DSH；DSH 不在 3080 端口时用 `--port` 指定。
+文件会复制到 `%USERPROFILE%\DshTray`。安装时会问两件事：要不要在桌面创建“DSH”快捷方式（默认要），以及要不要开机时显示托盘图标（默认不要；开机只显示图标，不启动 DSH）。也可以直接用 `--desktop` / `--no-desktop`、`--autostart` / `--no-autostart` 指定；DSH 不在 3080 端口时用 `--port`。之后双击桌面上的“DSH”，或者 `%USERPROFILE%\DshTray` 里的 `start-dsh-tray.vbs` 启动。
 
 托盘默认用 `dsh web --no-open` 启动 DSH，它只负责启动和停止，不会升级 DSH。如果你有自己的启动脚本，可以在 `~/.config/dsh-tray/env` 里改用它：
 
@@ -97,7 +97,7 @@ DSH_TRAY_STOP='my-launcher stop'
 DSH_TRAY_LOG="$HOME/.cache/my-launcher.log"   # 启动脚本写入 "dsh web: <地址>" 的日志
 ```
 
-不想要了，删掉 `%USERPROFILE%\DshTray` 和“启动”文件夹里的 `DSH tray.vbs` 即可。
+不想要了，删掉 `%USERPROFILE%\DshTray`、桌面上的“DSH”快捷方式和“启动”文件夹里的 `DSH tray.vbs` 即可。
 
 ## 卸载
 

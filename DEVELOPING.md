@@ -27,7 +27,8 @@ DSH 宿主收到 session/event
 | `notification-content.ps1` | 按通知类型生成中文通知内容与 XML |
 | `tray/dsh-tray-host.sh` | 可选托盘图标在 WSL 这边的部分：启动、停止 `dsh web`，读取登录地址 |
 | `tray/dsh-tray.ps1`、`tray/start-dsh-tray.vbs` | 可选托盘图标在 Windows 这边的部分，以及不弹窗口的启动入口 |
-| `tray/install.sh` | 把托盘复制到 `%USERPROFILE%\DshTray`，可选加入开机启动 |
+| `tray/install.sh` | 把托盘复制到 `%USERPROFILE%\DshTray`，询问是否创建桌面快捷方式、是否开机显示图标 |
+| `tray/create-shortcut.ps1` | 在 Windows 报告的桌面位置创建“DSH”快捷方式 |
 
 宿主插件监听 agent 已经发出的事件，因此即使 AI 没有任何工具，完成通知也能触发。插件不增加模型工具或提示词，也不修改 agent runtime。
 

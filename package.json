@@ -58,6 +58,7 @@
     "tray/dsh-tray.ps1",
     "tray/start-dsh-tray.vbs",
     "tray/install.sh",
+    "tray/create-shortcut.ps1",
     "whale.svg",
     "whale.png",
     "whale.ico",

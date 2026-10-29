@@ -87,7 +87,7 @@ It is not a DSH plugin, so install it once from WSL:
 bash ~/.dsh/profiles/web/node_modules/dsh-task-notify/tray/install.sh
 ```
 
-The files go to `%USERPROFILE%\DshTray`; double-click `start-dsh-tray.vbs` there to start it. `--autostart` adds a Startup entry that only shows the icon at sign-in, without starting DSH. Use `--port` when DSH does not listen on 3080.
+The files go to `%USERPROFILE%\DshTray`. The installer asks whether to add a "DSH" desktop shortcut (default yes) and whether to show the icon at sign-in (default no; it only shows the icon and does not start DSH). `--desktop` / `--no-desktop` and `--autostart` / `--no-autostart` answer these up front, and `--port` sets the port when DSH does not listen on 3080. Then start it from the "DSH" desktop shortcut or `start-dsh-tray.vbs` in `%USERPROFILE%\DshTray`.
 
 By default the tray starts DSH with `dsh web --no-open`. It only starts and stops DSH and never updates it. To use your own launcher instead, set it in `~/.config/dsh-tray/env`:
 
@@ -97,7 +97,7 @@ DSH_TRAY_STOP='my-launcher stop'
 DSH_TRAY_LOG="$HOME/.cache/my-launcher.log"   # where the launcher writes "dsh web: <url>"
 ```
 
-To remove it, delete `%USERPROFILE%\DshTray` and `DSH tray.vbs` in the Startup folder.
+To remove it, delete `%USERPROFILE%\DshTray`, the "DSH" desktop shortcut, and `DSH tray.vbs` in the Startup folder.
 
 ## Uninstall
 

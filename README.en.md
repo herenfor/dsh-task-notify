@@ -42,7 +42,7 @@ The Minimal preset within the Web profile is supported. The separate `headless`,
 Run this in WSL:
 
 ```bash
-dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.3
+dsh plugin --profile web add github:herenfor/dsh-task-notify#v0.0.5
 ```
 
 Wait for active tasks to finish, restart DSH, and refresh its browser page. The plugin loads automatically; no source path needs to be added by hand.

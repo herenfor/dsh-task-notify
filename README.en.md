@@ -1,7 +1,7 @@
 # DSH Task Notify
 
 [![MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.4-blue)](#requirements)
+[![DSH](https://img.shields.io/badge/DSH-0.2.x-blue)](#requirements)
 [![Tests](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml/badge.svg)](https://github.com/herenfor/dsh-task-notify/actions/workflows/test.yml)
 
 [中文](README.md) | English
@@ -27,7 +27,7 @@ Notifications only say what happened. Clicking a notification does not take you 
 
 ## Requirements
 
-Supports DSH `0.2.0-rc.2`, `0.2.1-rc.2`, `0.2.1-rc.3`, and `0.2.1-rc.4`. The plugin mainly targets Windows 11 + WSL2, with DSH running in WSL. Compatibility checks for `rc.3` and `rc.4` use Node.js `22.23.4`.
+Supports DSH `0.2.0-rc.2` and later `0.2.x` releases (`>=0.2.0-rc.2 <0.3.0-0`), so small DSH updates do not need a new plugin release; tested on `0.2.0-rc.2`, `0.2.1-rc.2`, `0.2.1-rc.3`, and `0.2.1-rc.4`. The plugin mainly targets Windows 11 + WSL2, with DSH running in WSL. Compatibility checks for `rc.3` and `rc.4` use Node.js `22.23.4`.
 
 You need:
 

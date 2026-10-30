@@ -8,6 +8,9 @@
 #   DSH_TRAY_LOG="$HOME/.cache/my-launcher.log"   # where the launcher writes "dsh web: <url>"
 set -euo pipefail
 umask 077
+# The tray runs this as `bash -l` at SHLVL 1, so `exit` also runs ~/.bash_logout; on Ubuntu that calls
+# clear_console, which fails without a console. Leave set -e off by then, or that failure becomes our status.
+finish() { set +e; exit "$1"; }
 
 config="${XDG_CONFIG_HOME:-$HOME/.config}/dsh-tray/env"
 # shellcheck source=/dev/null
@@ -32,10 +35,10 @@ case "${1-}" in
   start)
     if [[ -n "${DSH_TRAY_START-}" ]]; then
       setsid -f bash -c "$DSH_TRAY_START" < /dev/null > /dev/null 2>&1
-      exit 0
+      finish 0
     fi
-    recorded_pid > /dev/null && exit 0
-    command -v dsh > /dev/null || { printf 'dsh-tray: dsh is not on PATH\n' >&2; exit 1; }
+    recorded_pid > /dev/null && finish 0
+    command -v dsh > /dev/null || { printf 'dsh-tray: dsh is not on PATH\n' >&2; finish 1; }
     : > "$log"
     # A new session keeps the server alive after this short-lived wsl.exe call returns.
     setsid -f bash -c 'echo $$ > "$1"; exec dsh web --no-open --port "$2"' _ "$pid_file" "$port" < /dev/null >> "$log" 2>&1
@@ -43,16 +46,16 @@ case "${1-}" in
   stop)
     if [[ -n "${DSH_TRAY_STOP-}" ]]; then
       bash -c "$DSH_TRAY_STOP"
-      exit $?
+      finish $?
     fi
-    pid="$(recorded_pid)" || exit 0
+    pid="$(recorded_pid)" || finish 0
     kill -TERM "$pid"
     for _ in $(seq 1 100); do
-      recorded_pid > /dev/null || { rm -f "$pid_file"; exit 0; }
+      recorded_pid > /dev/null || { rm -f "$pid_file"; finish 0; }
       sleep 0.1
     done
     printf 'dsh-tray: dsh web did not stop within 10 seconds\n' >&2
-    exit 1
+    finish 1
     ;;
   url)
     # The tray reads this from stdout and opens it; it is never written anywhere else.
@@ -60,6 +63,6 @@ case "${1-}" in
     ;;
   *)
     printf 'usage: %s start|stop|url\n' "$0" >&2
-    exit 2
+    finish 2
     ;;
 esac

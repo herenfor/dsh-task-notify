@@ -56,3 +56,17 @@ test('stop leaves a stale or foreign pid alone', linuxOnly, () => {
 test('unknown commands are rejected', linuxOnly, () => {
   assert.equal(sandbox().run('bogus').status, 2)
 })
+
+// The tray runs `wsl.exe -e bash -l <script>`: a login shell at SHLVL 1. Ubuntu's ~/.bash_logout then
+// runs clear_console, which fails without a console; under set -e that turned every `exit 0` into 1,
+// so the tray reported "DSH 没有停下来" although DSH had stopped.
+test('a failing ~/.bash_logout in the tray login shell does not change the exit status', linuxOnly, () => {
+  const home = mkdtempSync(join(tmpdir(), 'dsh-tray-home-'))
+  writeFileSync(join(home, '.bash_logout'), 'if [ "$SHLVL" = 1 ]; then false; fi\n')
+  mkdirSync(join(home, 'config', 'dsh-tray'), { recursive: true })
+  writeFileSync(join(home, 'config', 'dsh-tray', 'env'), "DSH_TRAY_STOP='exit 0'\n")
+  const env = { ...process.env, HOME: home, SHLVL: '0', XDG_CONFIG_HOME: join(home, 'config'), XDG_CACHE_HOME: join(home, 'cache') }
+  const login = (command) => spawnSync('bash', ['-l', hostScript, command], { env, encoding: 'utf8' }).status
+  assert.equal(login('stop'), 0)
+  assert.equal(login('bogus'), 2)
+})
